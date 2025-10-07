@@ -1,94 +1,128 @@
-# 10x Astro Starter
+# WasteTrack Dashboard
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+An analytical dashboard for waste management data, enabling quick CSV data import and visualization of waste trends.
+
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Tech Stack](#tech-stack)
+- [Getting Started Locally](#getting-started-locally)
+- [Available Scripts](#available-scripts)
+- [Project Scope](#project-scope)
+- [Project Status](#project-status)
+- [License](#license)
+
+## Project Description
+
+WasteTrack Dashboard is a web-based analytical application designed for waste department managers. It allows for the import of CSV files containing waste data to instantly generate clear visualizations of trends. The primary goal of the MVP is to provide a simple tool that enables users to upload data, analyze it through charts, and generate a concise AI-powered text summary in under 5 minutes.
+
+This tool addresses the common challenge faced by waste processing companies where data is scattered across various spreadsheets and PDF reports, making it difficult to:
+
+- Identify dominant waste types over a specific period.
+- Quickly compare locations and time-based trends.
+- Prepare succinct reports for stakeholders.
+
+The absence of a centralized, visual analytical tool often leads to delayed decision-making and increased manual effort.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+The project is built with a modern tech stack:
 
-## Prerequisites
+- **Frontend**:
+  - [Astro 5](https://astro.build/)
+  - [React 19](https://react.dev/)
+  - [TypeScript 5](https://www.typescriptlang.org/)
+  - [Tailwind CSS 4](https://tailwindcss.com/)
+  - [shadcn/ui](https://ui.shadcn.com/)
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+- **Backend & Database**:
+  - [Supabase](https://supabase.io/)
 
-## Getting Started
+- **AI**:
+  - [OpenRouter.ai](https://openrouter.ai/)
 
-1. Clone the repository:
+- **CI/CD & Hosting**:
+  - [GitHub Actions](https://github.com/features/actions)
+  - [Cloudflare](https://www.cloudflare.com/)
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+## Getting Started Locally
 
-2. Install dependencies:
+To get a local copy up and running, follow these simple steps.
 
-```bash
-npm install
-```
+### Prerequisites
 
-3. Run the development server:
+- Node.js version `22.14.0` (it is recommended to use `nvm` - Node Version Manager).
+- `npm` package manager.
 
-```bash
-npm run dev
-```
+### Installation
 
-4. Build for production:
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/Bystrol/10xdevs-project
+   ```
+2. **Navigate to the project directory:**
+   ```sh
+   cd your-repository
+   ```
+3. **Use the correct Node.js version:**
+   ```sh
+   nvm use
+   ```
+4. **Install NPM packages:**
+   ```sh
+   npm install
+   ```
+5. **Set up environment variables:**
+   - Create a `.env` file in the root of the project.
+   - Add the necessary environment variables (e.g., `SUPABASE_URL`, `SUPABASE_KEY`, `OPENROUTER_API_KEY`).
 
-```bash
-npm run build
-```
+6. **Run the development server:**
+   ```sh
+   npm run dev
+   ```
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+In the project directory, you can run:
 
-## Project Structure
+- `npm run dev`: Runs the app in development mode.
+- `npm run build`: Builds the app for production.
+- `npm run preview`: Starts a local preview server for the production build.
+- `npm run astro`: Access the Astro CLI.
+- `npm run lint`: Lints the code using ESLint.
+- `npm run lint:fix`: Lints and automatically fixes problems.
+- `npm run format`: Formats code with Prettier.
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+## Project Scope
 
-## AI Development Support
+### In Scope (MVP Features)
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+- Import a single CSV file (up to 1000 records) with `waste_type`, `location`, and `date` columns.
+- Validate files for correct format and required fields.
+- Store data in a Supabase database.
+- Display a list of imported batches with an option to delete an entire batch.
+- A dashboard with charts for waste per month, type, and location.
+- Filter charts by date range, waste type, and location.
+- Export the currently displayed chart to a PDF.
+- Generate a concise (1-3 sentences) AI summary of the filtered data.
+- User feedback through toast notifications for success/error messages.
+- User authentication (login/registration).
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+### Out of Scope
 
-### Cursor IDE
+- Authorization and user role management.
+- Editing individual records after import.
+- Predictive analytics or integration with ERP/GPS systems.
+- A responsive mobile interface.
+- Storing the original uploaded CSV file.
+- Full report generation for PDF export (only chart and title are included).
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+## Project Status
 
-### GitHub Copilot
+**Status:** In Progress
 
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
-
-### Windsurf
-
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+This project is currently under active development for the Minimum Viable Product (MVP) release.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the `LICENSE` file for more information.
