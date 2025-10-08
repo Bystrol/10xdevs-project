@@ -61,4 +61,45 @@ export class BatchService {
       pagination,
     };
   }
+
+  /**
+   * Performs soft-delete on a batch by setting its status to 'deleted'.
+   * Only the batch owner can delete their own batches.
+   *
+   * @param batchId - The ID of the batch to delete
+   * @param userId - The authenticated user's ID
+   * @returns Promise<boolean> - true if batch was found and deleted, false if not found or access denied
+   * @throws Error if database query fails
+   */
+  async deleteBatch(batchId: number, userId: string): Promise<boolean> {
+    // First check if the batch exists and belongs to the user
+    const { error: checkError } = await supabaseClient
+      .from("batches")
+      .select("id")
+      .eq("id", batchId)
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .single();
+
+    if (checkError) {
+      if (checkError.code === "PGRST116") {
+        // No rows returned - batch not found or doesn't belong to user
+        return false;
+      }
+      throw new Error(`Failed to check batch: ${checkError.message}`);
+    }
+
+    // If we found the batch, perform the soft-delete
+    const { error: updateError } = await supabaseClient
+      .from("batches")
+      .update({ status: "deleted" })
+      .eq("id", batchId)
+      .eq("user_id", userId);
+
+    if (updateError) {
+      throw new Error(`Failed to delete batch: ${updateError.message}`);
+    }
+
+    return true;
+  }
 }
