@@ -1,5 +1,6 @@
+import Papa from "papaparse";
 import { supabaseClient } from "../../db/supabase.client";
-import type { BatchDto, ListBatchesResponseDto, PaginationDto } from "../../types";
+import type { BatchDto, ImportCsvBatchResponseDto, ListBatchesResponseDto, PaginationDto } from "../../types";
 
 /**
  * Service for managing batch operations.
@@ -101,5 +102,152 @@ export class BatchService {
     }
 
     return true;
+  }
+
+  /**
+   * Imports a CSV file containing waste data and creates a new batch.
+   *
+   * @param file - The CSV file to import
+   * @param userId - The authenticated user's ID
+   * @returns Promise containing the import result with batch details
+   * @throws Error if validation fails or database operations fail
+   */
+  async importBatch(file: File, userId: string): Promise<ImportCsvBatchResponseDto> {
+    // Read file content
+    const fileContent = await file.text();
+
+    // Parse CSV
+    const parseResult = Papa.parse(fileContent, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (header: string) => header.toLowerCase().trim(),
+    });
+
+    if (parseResult.errors.length > 0) {
+      throw new Error(`CSV parsing failed: ${parseResult.errors[0].message}`);
+    }
+
+    const rows = parseResult.data as Record<string, string>[];
+
+    // Validate record count (max 1000)
+    if (rows.length > 1000) {
+      throw new Error("File exceeds the 1000 record limit.");
+    }
+
+    if (rows.length === 0) {
+      throw new Error("File contains no valid records.");
+    }
+
+    // Validate required headers
+    const requiredHeaders = ["date", "waste_type", "location", "quantity"];
+    const headers = Object.keys(rows[0]);
+    const missingHeaders = requiredHeaders.filter((header) => !headers.includes(header));
+
+    if (missingHeaders.length > 0) {
+      throw new Error(`Missing required columns: ${missingHeaders.join(", ")}.`);
+    }
+
+    // Get existing waste types and locations for validation
+    const wasteTypesResult = await supabaseClient.from("waste_types").select("id, name");
+
+    if (wasteTypesResult.error) {
+      throw new Error(`Failed to fetch waste types: ${wasteTypesResult.error.message}`);
+    }
+
+    const wasteTypes = wasteTypesResult.data || [];
+
+    const wasteTypeNames = new Set(wasteTypes.map((wt) => wt.name.toLowerCase()));
+
+    // Validate each row
+    const validatedRows: {
+      date: string;
+      waste_type: string;
+      location: string;
+      quantity: number;
+    }[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const rowNumber = i + 2; // +1 for 0-based index, +1 for header row
+
+      const dateStr = row.date?.trim();
+      const wasteTypeStr = row.waste_type?.trim().toLowerCase();
+      const locationStr = row.location?.trim().toLowerCase();
+      const quantityStr = row.quantity?.trim();
+
+      // Validate date format
+      if (!dateStr) {
+        throw new Error(`Invalid data format in row ${rowNumber}: date is required.`);
+      }
+
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        throw new Error(`Invalid data format in row ${rowNumber}: invalid date format. Use YYYY-MM-DD.`);
+      }
+
+      // Check if date is not in the future
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (date > today) {
+        throw new Error(`Invalid data format in row ${rowNumber}: date cannot be in the future.`);
+      }
+
+      // Validate waste type
+      if (!wasteTypeStr || !wasteTypeNames.has(wasteTypeStr)) {
+        throw new Error(
+          `Invalid value in row ${rowNumber}: unknown waste type "${wasteTypeStr}". Valid types: ${Array.from(wasteTypeNames).join(", ")}.`
+        );
+      }
+
+      // Validate quantity
+      if (!quantityStr) {
+        throw new Error(`Invalid data format in row ${rowNumber}: quantity is required.`);
+      }
+
+      const quantity = parseInt(quantityStr, 10);
+      if (isNaN(quantity) || quantity <= 0) {
+        throw new Error(`Invalid data format in row ${rowNumber}: quantity must be a positive integer.`);
+      }
+
+      validatedRows.push({
+        date: date.toISOString().split("T")[0], // Format as YYYY-MM-DD
+        waste_type: wasteTypeStr,
+        location: locationStr,
+        quantity,
+      });
+    }
+
+    // Call RPC function to perform transactional insertion
+    const { data: rpcResult, error: rpcError } = await supabaseClient.rpc("import_batch_data", {
+      p_user_id: userId,
+      p_filename: file.name,
+      p_waste_data: validatedRows,
+    });
+
+    if (rpcError) {
+      throw new Error(`Failed to import batch: ${rpcError.message}`);
+    }
+
+    // Type assertion for RPC result (we know the structure from our function)
+    const result = rpcResult as {
+      batch_id: number;
+      filename: string;
+      record_count: number;
+      created_at: string;
+    };
+
+    // Transform result to DTO
+    const batch: BatchDto = {
+      id: result.batch_id,
+      filename: result.filename,
+      status: "active",
+      recordCount: result.record_count,
+      createdAt: result.created_at,
+    };
+
+    return {
+      message: "Import successful",
+      batch,
+    };
   }
 }

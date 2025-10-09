@@ -1,0 +1,11 @@
+date,waste_type,location,quantity
+2024-01-15,plastic,City Center,150
+2024-01-16,bio,North District,200
+2024-01-17,glass,South Plaza,75
+2024-01-18,paper,East Mall,120
+2024-01-19,mixed,West Park,300
+2024-02-01,plastic,City Center,180
+2024-02-02,bio,North District,250
+2024-02-03,glass,South Plaza,90
+2024-02-04,paper,East Mall,110
+2024-02-05,mixed,West Park,280
