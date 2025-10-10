@@ -23,7 +23,7 @@ Aplikacja będzie składać się z trzech głównych widoków: strony logowania,
 
 ### Widok: Dashboard Analityczny (Dashboard)
 
-- **Ścieżka widoku:** `/dashboard`
+- **Ścieżka widoku:** `/`
 - **Główny cel:** Wizualizacja i analiza danych o odpadach za pomocą interaktywnych wykresów i filtrów.
 - **Kluczowe informacje do wyświetlenia:**
   - Wykres ilości odpadów w podziale na miesiące.
