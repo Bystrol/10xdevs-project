@@ -1,0 +1,11 @@
+---
+import ImportsView from "../components/views/ImportsView.tsx";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Imports">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Import Waste Data</h1>
+    <ImportsView client:load />
+  </main>
+</Layout>
