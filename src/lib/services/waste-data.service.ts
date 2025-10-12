@@ -1,5 +1,8 @@
+import OpenAI from "openai";
 import { supabaseClient } from "../../db/supabase.client";
 import type {
+  GenerateAiReportCommand,
+  GenerateAiReportResponseDto,
   GetWasteDataSummaryQueryDto,
   GroupByOption,
   WasteDataSummaryItemDto,
@@ -84,6 +87,105 @@ export class WasteDataService {
         throw error;
       }
       throw new Error("Unexpected error occurred while fetching waste data summary");
+    }
+  }
+
+  /**
+   * Generates an AI-powered text summary report based on waste data filtering criteria.
+   * Uses aggregated waste data to create concise insights and trends analysis.
+   *
+   * @param command - Report generation parameters including filters and grouping
+   * @param userId - The authenticated user's ID for data isolation
+   * @returns Promise containing AI-generated report text
+   * @throws Error if database query fails, AI service is unavailable, or parameters are invalid
+   */
+  async generateAiReport(command: GenerateAiReportCommand, userId: string): Promise<GenerateAiReportResponseDto> {
+    try {
+      // First, get the aggregated data using existing getSummary method
+      const summaryData = await this.getSummary(
+        {
+          groupBy: command.groupBy,
+          startDate: command.startDate,
+          endDate: command.endDate,
+          wasteTypeIds: command.wasteTypeIds?.join(","),
+          locationIds: command.locationIds?.join(","),
+        },
+        userId
+      );
+
+      // Format data for the AI prompt
+      const dataString = summaryData.data.map((item) => `${item.label}: ${item.value} units`).join("\n");
+
+      // Create dynamic prompt based on groupBy parameter
+      const groupByDescriptions = {
+        month: "monthly distribution over time",
+        type: "waste type categories",
+        location: "different locations/facilities",
+      };
+
+      const prompt = `Analyze the following waste management data showing ${groupByDescriptions[command.groupBy]}:
+
+${dataString}
+
+Please provide a concise, professional summary report that includes:
+1. Key trends and patterns observed
+2. Notable highs and lows
+
+Please be concise and to the point. Use markdown formatting for the report. Don't include any other text than the report. The report should be maximum 3 sentences.
+
+Keep the report focused and actionable, suitable for management review.`;
+
+      // Initialize OpenAI client
+      const openai = new OpenAI({
+        apiKey: import.meta.env.OPENAI_API_KEY,
+      });
+
+      // Generate AI report
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "developer",
+            content:
+              "You are a professional waste management analyst providing concise, data-driven insights. Focus on key trends, actionable recommendations, and clear analysis.",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        max_completion_tokens: 1000,
+        temperature: 0.7,
+      });
+
+      const report = completion.choices[0]?.message?.content;
+
+      if (!report) {
+        throw new Error("AI service failed to generate report content");
+      }
+
+      return {
+        report: report.trim(),
+      };
+    } catch (error) {
+      // Handle OpenAI API errors specifically
+      if (error instanceof OpenAI.APIError) {
+        console.error("OpenAI API Error:", {
+          status: error.status,
+          message: error.message,
+          requestId: error.requestID,
+        });
+        throw new Error("AI service error: Unable to generate report. Please try again later.");
+      }
+
+      // Handle other errors (database, validation, etc.)
+      if (error instanceof Error) {
+        throw error;
+      }
+
+      // Handle unexpected errors
+      console.error("Unexpected error in generateAiReport:", error);
+      throw new Error("Unexpected error occurred while generating AI report");
     }
   }
 }

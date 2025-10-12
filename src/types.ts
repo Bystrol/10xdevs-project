@@ -84,6 +84,7 @@ export interface GetWasteDataSummaryQueryDto {
  * Command model for the `POST /waste-data/report` request body.
  */
 export interface GenerateAiReportCommand {
+  groupBy: GroupByOption;
   startDate?: string;
   endDate?: string;
   wasteTypeIds?: number[];
