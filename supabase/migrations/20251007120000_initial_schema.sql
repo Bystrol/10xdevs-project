@@ -120,13 +120,22 @@ comment on index idx_audit_logs_timestamp is 'chronological audit log ordering';
 alter table batches enable row level security;
 alter table waste_data enable row level security;
 alter table audit_logs enable row level security;
+alter table waste_types enable row level security;
 
--- waste_types and locations are public lookup tables (no rls needed)
+-- locations are public lookup tables (no rls needed)
 -- they can be read by all authenticated users but only modified via migrations/admin
 
 -- =============================================================================
 -- 5. create rls policies
 -- =============================================================================
+
+-- waste_types policies: authenticated users can read waste types (lookup table)
+create policy "authenticated users can select waste types"
+  on waste_types for select
+  using (auth.role() = 'authenticated');
+
+comment on policy "authenticated users can select waste types" on waste_types is
+  'allows authenticated users to read waste type lookup data';
 
 -- batches policies: users can only access their own batches
 create policy "users can select own batches"
