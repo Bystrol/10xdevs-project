@@ -1,12 +1,18 @@
 -- migration: disable_rls_policies
 -- purpose: disable all rls policies created in initial_schema
--- affected tables: waste_types, batches, waste_data, audit_logs
+-- affected tables: waste_types, locations, batches, waste_data, audit_logs
 
 -- =============================================================================
 -- disable policies for waste_types table
 -- =============================================================================
 
 alter table public.waste_types disable row level security;
+
+-- =============================================================================
+-- disable policies for locations table
+-- =============================================================================
+
+alter table public.locations disable row level security;
 
 -- =============================================================================
 -- disable policies for batches table

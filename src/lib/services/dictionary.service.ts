@@ -1,5 +1,5 @@
 import { supabaseClient } from "../../db/supabase.client";
-import type { WasteTypeDto } from "../../types";
+import type { LocationDto, WasteTypeDto } from "../../types";
 
 /**
  * Service for managing dictionary operations.
@@ -30,6 +30,33 @@ export class DictionaryService {
         throw error;
       }
       throw new Error("Unexpected error occurred while fetching waste types");
+    }
+  }
+
+  /**
+   * Retrieves all available locations from the database.
+   * This function queries the locations table and returns all records.
+   *
+   * @returns Promise containing an array of location DTOs
+   * @throws Error if database query fails
+   */
+  async getLocations(): Promise<LocationDto[]> {
+    try {
+      // Query all locations from the database
+      const { data: locationsData, error } = await supabaseClient.from("locations").select("id, name").order("id");
+
+      if (error) {
+        throw new Error(`Failed to fetch locations: ${error.message}`);
+      }
+
+      // Return the data directly as it matches our LocationDto structure
+      return locationsData || [];
+    } catch (error) {
+      // Re-throw with context
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("Unexpected error occurred while fetching locations");
     }
   }
 }

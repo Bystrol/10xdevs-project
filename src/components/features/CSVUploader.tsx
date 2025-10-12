@@ -17,10 +17,6 @@ export default function CSVUploader({ onUploadSuccess, onUploadError, onUploadSt
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (selectedFile) {
-      setSelectedFile(null);
-    }
-
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
   };

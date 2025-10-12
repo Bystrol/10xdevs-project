@@ -121,8 +121,9 @@ alter table batches enable row level security;
 alter table waste_data enable row level security;
 alter table audit_logs enable row level security;
 alter table waste_types enable row level security;
+alter table locations enable row level security;
 
--- locations are public lookup tables (no rls needed)
+-- locations are public lookup tables (rls enabled for consistency)
 -- they can be read by all authenticated users but only modified via migrations/admin
 
 -- =============================================================================
@@ -136,6 +137,14 @@ create policy "authenticated users can select waste types"
 
 comment on policy "authenticated users can select waste types" on waste_types is
   'allows authenticated users to read waste type lookup data';
+
+-- locations policies: authenticated users can read locations (lookup table)
+create policy "authenticated users can select locations"
+  on locations for select
+  using (auth.role() = 'authenticated');
+
+comment on policy "authenticated users can select locations" on locations is
+  'allows authenticated users to read location lookup data';
 
 -- batches policies: users can only access their own batches
 create policy "users can select own batches"
