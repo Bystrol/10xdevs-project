@@ -19,7 +19,14 @@ const { title = "WasteTrack Dashboard" } = Astro.props;
     <title>{title}</title>
   </head>
   <body class="dark">
-    <slot />
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">WasteTrack</h1>
+        </div>
+        <slot />
+      </div>
+    </div>
     <Toaster richColors closeButton client:only="react" />
   </body>
 </html>

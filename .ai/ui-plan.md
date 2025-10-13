@@ -12,7 +12,9 @@ Aplikacja będzie składać się z trzech głównych widoków: strony logowania,
 
 - **Ścieżka widoku:** `/login`
 - **Główny cel:** Uwierzytelnienie użytkownika w systemie. Dostęp do aplikacji jest zablokowany dla niezalogowanych użytkowników.
-- **Kluczowe informacje do wyświetlenia:** Formularz logowania i rejestracji.
+- **Kluczowe informacje do wyświetlenia:**
+  - Formularz logowania i rejestracji.
+  - Przycisk odzyskiwania hasła.
 - **Kluczowe komponenty widoku:**
   - `LoginForm`: Komponent formularza logowania (email, hasło).
   - `RegisterForm`: Komponent formularza rejestracji.

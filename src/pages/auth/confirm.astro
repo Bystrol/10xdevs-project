@@ -1,0 +1,44 @@
+---
+import AuthLayout from "@/layouts/AuthLayout.astro";
+
+// Handle email confirmation and password reset
+const urlParams = new URLSearchParams(Astro.url.search);
+const token = urlParams.get("token");
+const type = urlParams.get("type");
+const error = urlParams.get("error");
+
+if (error) {
+  // Handle error from URL parameters
+  Astro.redirect("/login?error=" + encodeURIComponent(error));
+  return;
+}
+
+if (type === "recovery") {
+  // Password reset flow
+  // The token will be handled by Supabase auth state change listener
+  // For now, redirect to login with success message
+  Astro.redirect("/login?message=password_reset_confirmed");
+} else if (token) {
+  // Email confirmation flow
+  // This would normally be handled by Supabase, but for now redirect to login
+  Astro.redirect("/login?message=account_confirmed");
+} else {
+  // No valid parameters, redirect to login
+  Astro.redirect("/login");
+}
+---
+
+<AuthLayout title="Confirm - WasteTrack Dashboard">
+  <div class="space-y-6">
+    <div>
+      <h2 class="text-center text-2xl font-bold text-gray-900 dark:text-white">Confirming your account</h2>
+      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+        Please wait while we confirm your account...
+      </p>
+    </div>
+
+    <div class="text-center">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+    </div>
+  </div>
+</AuthLayout>

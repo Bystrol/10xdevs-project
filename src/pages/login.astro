@@ -1,0 +1,8 @@
+---
+import LoginForm from "@/components/features/auth/LoginForm.tsx";
+import AuthLayout from "@/layouts/AuthLayout.astro";
+---
+
+<AuthLayout title="Sign In - WasteTrack Dashboard">
+  <LoginForm client:load />
+</AuthLayout>
