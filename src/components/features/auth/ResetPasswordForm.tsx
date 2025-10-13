@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabaseClient } from "@/db/supabase.client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -29,18 +28,23 @@ export default function ResetPasswordForm() {
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(data.email, {
-        redirectTo: `${window.location.origin}/auth/confirm`,
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
 
-      if (error) {
-        setError("root", {
-          message: error.message || "Failed to send reset email",
-        });
-      } else {
+      if (response.ok) {
         setIsSuccess(true);
         toast.success("Reset email sent", {
           description: "Please check your email for password reset instructions.",
+        });
+      } else {
+        const errorData = await response.json();
+        setError("root", {
+          message: errorData.error || "Failed to send reset email",
         });
       }
     } catch (error) {

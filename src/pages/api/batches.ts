@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import { BatchService } from "../../lib/services/batch.service";
 
 // Disable prerendering for API routes
@@ -37,8 +36,8 @@ const querySchema = z.object({
 /**
  * GET /api/batches
  *
- * Retrieves a paginated list of batches for the default user.
- * Note: Authentication will be implemented later.
+ * Retrieves a paginated list of batches for the authenticated user.
+ * Note: Requires authentication.
  *
  * Query Parameters:
  * - page (optional): Page number (default: 1)
@@ -49,7 +48,7 @@ const querySchema = z.object({
  * - 400: Bad Request - Invalid query parameters
  * - 500: Internal Server Error - Database or server errors
  */
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   try {
     // Validate query parameters
     const url = new URL(request.url);
@@ -73,9 +72,9 @@ export const GET: APIRoute = async ({ request }) => {
 
     const { page, limit } = queryValidation.data;
 
-    // Call service to get batches for default user
+    // Call service to get batches for authenticated user
     const batchService = new BatchService();
-    const result = await batchService.listBatches(DEFAULT_USER_ID, page, limit);
+    const result = await batchService.listBatches(locals.user?.id ?? "", page, limit);
 
     // Return successful response
     return new Response(JSON.stringify(result), {

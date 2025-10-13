@@ -3,19 +3,11 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 
-const registerSchema = z
+const confirmResetPasswordSchema = z
   .object({
-    email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain at least one lowercase letter, one uppercase letter, and one number"
-      ),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -23,9 +15,9 @@ const registerSchema = z
     path: ["confirmPassword"],
   });
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+type ConfirmResetPasswordFormData = z.infer<typeof confirmResetPasswordSchema>;
 
-export default function RegisterForm() {
+export default function ConfirmResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -33,35 +25,32 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<ConfirmResetPasswordFormData>({
+    resolver: zodResolver(confirmResetPasswordSchema),
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (data: ConfirmResetPasswordFormData) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/confirm-reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+        body: JSON.stringify({ password: data.password }),
       });
 
       if (response.ok) {
-        toast.success("Registration successful");
-        window.location.href = "/";
+        // Redirect to login page after successful password reset
+        window.location.href = "/login";
       } else {
         const errorData = await response.json();
         setError("root", {
-          message: errorData.error || "Registration failed",
+          message: errorData.error || "Failed to reset password",
         });
       }
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Confirm reset password error:", error);
       setError("root", {
         message: "An error occurred. Please try again.",
       });
@@ -73,22 +62,15 @@ export default function RegisterForm() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-center text-2xl font-bold text-gray-900 dark:text-white">Create your account</h2>
+        <h2 className="text-center text-2xl font-bold text-gray-900 dark:text-white">Reset your password</h2>
+        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">Enter your new password below.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email address
-            </label>
-            <Input id="email" type="email" autoComplete="email" className="mt-1" {...register("email")} />
-            {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>}
-          </div>
-
-          <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Password
+              New password
             </label>
             <Input
               id="password"
@@ -104,7 +86,7 @@ export default function RegisterForm() {
 
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Confirm password
+              Confirm new password
             </label>
             <Input
               id="confirmPassword"
@@ -127,20 +109,17 @@ export default function RegisterForm() {
 
         <div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Creating account..." : "Create account"}
+            {isLoading ? "Resetting password..." : "Reset password"}
           </Button>
         </div>
 
         <div className="text-center">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Already have an account?{" "}
-            <a
-              href="/login"
-              className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-            >
-              Sign in
-            </a>
-          </span>
+          <a
+            href="/login"
+            className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            Back to sign in
+          </a>
         </div>
       </form>
     </div>
