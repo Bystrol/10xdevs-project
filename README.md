@@ -39,11 +39,16 @@ The project is built with a modern tech stack:
   - [Supabase](https://supabase.io/)
 
 - **AI**:
-  - [OpenRouter.ai](https://openrouter.ai/)
+  - [OpenAI](https://openai.com/)
 
 - **CI/CD & Hosting**:
   - [GitHub Actions](https://github.com/features/actions)
   - [Cloudflare](https://www.cloudflare.com/)
+
+- **Testing**:
+  - [Vitest](https://vitest.dev/) - Unit and integration testing.
+  - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) - Testing React components.
+  - [Playwright](https://playwright.dev/) - End-to-end testing.
 
 ## Getting Started Locally
 

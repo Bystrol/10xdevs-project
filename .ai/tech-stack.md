@@ -11,8 +11,13 @@ Backend i baza danych
 • Supabase – Postgres + Auth + Storage, wspiera rollback partii i RLS.
 
 AI  
-• OpenRouter.ai – ujednolicony gateway do LLM-ów dla generowania raportu.
+• OpenAI API – dla generowania raportu.
 
 CI/CD i hosting  
 • GitHub Actions – automatyczne buildy i testy przy każdym commicie.  
 • Cloudflare – edge-deploy, WAF i certyfikaty SSL bez konfiguracji.
+
+Testowanie
+• Vitest – testy jednostkowe i integracyjne, weryfikacja logiki biznesowej.
+• React Testing Library – testowanie komponentów React w izolacji.
+• Playwright – testy E2E, symulacja realnych scenariuszy użytkownika.
