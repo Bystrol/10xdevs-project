@@ -66,7 +66,14 @@ export default function LoginForm() {
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Email address
             </label>
-            <Input id="email" type="email" autoComplete="email" className="mt-1" {...register("email")} />
+            <Input
+              id="email"
+              data-testid="email-input"
+              type="email"
+              autoComplete="email"
+              className="mt-1"
+              {...register("email")}
+            />
             {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>}
           </div>
 
@@ -76,6 +83,7 @@ export default function LoginForm() {
             </label>
             <Input
               id="password"
+              data-testid="password-input"
               type="password"
               autoComplete="current-password"
               className="mt-1"
@@ -88,13 +96,13 @@ export default function LoginForm() {
         </div>
 
         {errors.root && (
-          <div className="text-center">
+          <div className="text-center" data-testid="error-message">
             <p className="text-sm text-red-600 dark:text-red-400">{errors.root.message}</p>
           </div>
         )}
 
         <div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" data-testid="login-button" className="w-full" disabled={isLoading}>
             {isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </div>
@@ -103,6 +111,7 @@ export default function LoginForm() {
           <div>
             <a
               href="/reset-password"
+              data-testid="reset-password-link"
               className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
             >
               Forgot your password?
@@ -113,6 +122,7 @@ export default function LoginForm() {
               Don&apos;t have an account?{" "}
               <a
                 href="/register"
+                data-testid="register-link"
                 className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
               >
                 Sign up

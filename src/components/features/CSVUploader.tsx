@@ -76,9 +76,10 @@ export default function CSVUploader({ onUploadSuccess, onUploadError, onUploadSt
     selectedFile && (selectedFile.type === "text/csv" || selectedFile.name.toLowerCase().endsWith(".csv"));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="csv-uploader">
       <div className="flex items-center space-x-4">
         <Input
+          data-testid="file-input"
           ref={fileInputRef}
           type="file"
           accept=".csv,text/csv"
@@ -87,6 +88,7 @@ export default function CSVUploader({ onUploadSuccess, onUploadError, onUploadSt
           className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
         />
         <Button
+          data-testid="upload-button"
           onClick={handleUpload}
           disabled={!selectedFile || !isValidFile || isUploading}
           className="min-w-[100px]"
@@ -97,7 +99,7 @@ export default function CSVUploader({ onUploadSuccess, onUploadError, onUploadSt
 
       {isUploading && (
         <div className="space-y-2">
-          <Progress value={uploadProgress} className="w-full" />
+          <Progress value={uploadProgress} className="w-full" data-testid="upload-progress" />
           <div className="text-sm text-gray-600 text-center">Uploading... {Math.round(uploadProgress)}%</div>
         </div>
       )}

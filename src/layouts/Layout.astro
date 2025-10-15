@@ -1,5 +1,5 @@
 ---
-import UserMenu from "@/components/features/auth/UserMenu.tsx";
+import Sidebar from "@/components/features/auth/Sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import "../styles/global.css";
 
@@ -20,20 +20,14 @@ const { user } = Astro.locals;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class="dark">
-    {
-      user && (
-        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3">
-          <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-semibold text-gray-900 dark:text-white">WasteTrack Dashboard</h1>
-            <UserMenu email={user.email ?? ""} client:load />
-          </div>
-        </header>
-      )
-    }
-    <main class="min-h-screen">
+
+  <body class="dark flex">
+    {user && <Sidebar email={user.email ?? ""} client:only="react" />}
+
+    <main class="w-full">
       <slot />
     </main>
+
     <Toaster richColors closeButton client:only="react" />
   </body>
 </html>

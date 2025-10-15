@@ -35,9 +35,18 @@ export default function UserMenu({ email }: UserMenuProps) {
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <span className="text-sm text-gray-700 dark:text-gray-300">Welcome, {email}</span>
-      <Button variant="outline" size="sm" onClick={handleLogout} disabled={isLoggingOut} className="text-sm">
+    <div className="flex items-center gap-4" data-testid="user-menu">
+      <span className="text-md text-gray-700 dark:text-gray-300" data-testid="welcome-message">
+        Welcome, {email}
+      </span>
+      <Button
+        data-testid="logout-button"
+        variant="outline"
+        size="lg"
+        onClick={handleLogout}
+        disabled={isLoggingOut}
+        className="text-md"
+      >
         {isLoggingOut ? "Logging out..." : "Logout"}
       </Button>
     </div>

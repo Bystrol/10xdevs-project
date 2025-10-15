@@ -38,7 +38,7 @@ export default function BatchesList({ batches, pagination, onDelete, onPageChang
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="batches-list">
       <Table>
         <TableHeader>
           <TableRow>
@@ -51,7 +51,7 @@ export default function BatchesList({ batches, pagination, onDelete, onPageChang
         </TableHeader>
         <TableBody>
           {batches.map((batch) => (
-            <TableRow key={batch.id}>
+            <TableRow key={batch.id} data-testid="batch-item">
               <TableCell className="font-medium">{batch.filename}</TableCell>
               <TableCell>{formatDate(batch.createdAt)}</TableCell>
               <TableCell>{batch.recordCount.toLocaleString()}</TableCell>

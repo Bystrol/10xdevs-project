@@ -25,12 +25,14 @@ export default function ImportsView() {
     addBatch(newBatch);
     toast.success("Import successful", {
       description: `File "${newBatch.filename}" has been imported successfully.`,
+      testId: "upload-success",
     });
   };
 
   const handleUploadError = (error: Error) => {
     toast.error("Import failed", {
       description: error.message,
+      testId: "upload-error",
     });
   };
 
