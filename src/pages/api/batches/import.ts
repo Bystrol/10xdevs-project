@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
 import { BatchService } from "../../../lib/services/batch.service";
 import type { ImportCsvBatchResponseDto } from "../../../types";
 
@@ -20,7 +21,7 @@ export const prerender = false;
  * - 400: Bad Request - Invalid file or validation errors
  * - 500: Internal Server Error - Database or processing errors
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     // Validate Content-Type
     const contentType = request.headers.get("content-type");
@@ -79,8 +80,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // Call service to import the batch
-    const batchService = new BatchService();
+    // Create supabase instance and service
+    const supabase = createSupabaseServerInstance({ headers: request.headers, cookies });
+    const batchService = new BatchService(supabase);
     const result: ImportCsvBatchResponseDto = await batchService.importBatch(file, locals.user?.id ?? "");
 
     // Return successful response

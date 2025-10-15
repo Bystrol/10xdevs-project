@@ -1,28 +1,32 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import Papa from "papaparse";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Database } from "../../../src/db/database.types";
 import { BatchService } from "../../../src/lib/services/batch.service";
 
 // Mock dependencies
 vi.mock("papaparse");
 
-// Mock supabase client with factory function to prevent initialization
-vi.mock("../../../src/db/supabase.client", () => ({
-  supabaseClient: {
-    from: vi.fn(),
-    rpc: vi.fn(),
-  },
-}));
+// Mock createSupabaseServerInstance to return a mocked SupabaseClient
+const mockSupabaseClient = {
+  from: vi.fn(),
+  rpc: vi.fn(),
+} as unknown as SupabaseClient<Database>;
 
-import { supabaseClient } from "../../../src/db/supabase.client";
+// Type the mocked client for easier use in tests
+const typedMockSupabaseClient = vi.mocked(mockSupabaseClient);
+
+vi.mock("../../../src/db/supabase.client", () => ({
+  createSupabaseServerInstance: vi.fn().mockReturnValue(mockSupabaseClient),
+}));
 
 describe("BatchService", () => {
   let batchService: BatchService;
-  const mockSupabaseClient = vi.mocked(supabaseClient);
   const mockPapa = vi.mocked(Papa);
 
   beforeEach(() => {
     vi.clearAllMocks();
-    batchService = new BatchService();
+    batchService = new BatchService(mockSupabaseClient);
   });
 
   describe("importBatch", () => {
@@ -86,7 +90,7 @@ describe("BatchService", () => {
         ]);
 
         // Mock waste types fetch
-        mockSupabaseClient.from.mockReturnValue({
+        typedMockSupabaseClient.from.mockReturnValue({
           select: vi.fn().mockResolvedValue({
             data: [
               { id: 1, name: "plastic" },
@@ -94,7 +98,7 @@ describe("BatchService", () => {
             ],
             error: null,
           }),
-        } as unknown as ReturnType<typeof supabaseClient.from>);
+        } as unknown as ReturnType<typeof mockSupabaseClient.from>);
 
         // Mock RPC call
         const mockRpcResult = {
@@ -104,7 +108,7 @@ describe("BatchService", () => {
           created_at: "2023-01-01T10:00:00Z",
         };
 
-        mockSupabaseClient.rpc.mockResolvedValue({
+        typedMockSupabaseClient.rpc.mockResolvedValue({
           data: mockRpcResult,
           error: null,
         });
@@ -218,7 +222,7 @@ describe("BatchService", () => {
     describe("Row-level Data Validation", () => {
       beforeEach(() => {
         // Mock waste types fetch for all row validation tests
-        mockSupabaseClient.from.mockReturnValue({
+        typedMockSupabaseClient.from.mockReturnValue({
           select: vi.fn().mockResolvedValue({
             data: [
               { id: 1, name: "plastic" },
@@ -226,7 +230,7 @@ describe("BatchService", () => {
             ],
             error: null,
           }),
-        } as unknown as ReturnType<typeof supabaseClient.from>);
+        } as unknown as ReturnType<typeof mockSupabaseClient.from>);
       });
 
       it("should throw an error for rows with an invalid date format", async () => {

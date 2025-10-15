@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
 import { WasteDataService } from "../../../lib/services/waste-data.service";
 import type { GenerateAiReportCommand, GenerateAiReportResponseDto } from "../../../types";
 
@@ -47,7 +48,7 @@ const generateAiReportSchema = z.object({
  * - 500: Internal Server Error - Database or server errors
  * - 503: Service Unavailable - AI service error
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     // Parse and validate request body
     const body = await request.json();
@@ -86,8 +87,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     }
 
-    // Call service to generate AI report
-    const wasteDataService = new WasteDataService();
+    // Create supabase instance and service
+    const supabase = createSupabaseServerInstance({ headers: request.headers, cookies });
+    const wasteDataService = new WasteDataService(supabase);
     const result: GenerateAiReportResponseDto = await wasteDataService.generateAiReport(command, locals.user?.id ?? "");
 
     // Return successful response

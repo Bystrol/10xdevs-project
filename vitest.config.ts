@@ -12,6 +12,8 @@ export default defineConfig({
     globals: true,
     // Test file patterns
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    // Exclude E2E tests (handled by Playwright)
+    exclude: ["src/__tests__/e2e/**"],
     // Global test setup file
     setupFiles: ["./src/test/setup.ts"],
     // TypeScript configuration

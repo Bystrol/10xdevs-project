@@ -34,18 +34,3 @@ export const createSupabaseServerInstance = (context: { headers: Headers; cookie
 
   return supabase;
 };
-
-// Legacy client for backward compatibility (remove after full migration)
-export const supabaseClient = createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
-  cookieOptions,
-  cookies: {
-    getAll() {
-      return [];
-    },
-    setAll() {
-      // No-op for client-side usage
-    },
-  },
-});
-
-export const DEFAULT_USER_ID = "1915630d-da0e-4b3b-888b-df0cee949466";

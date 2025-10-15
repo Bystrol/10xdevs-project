@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
 import { BatchService } from "../../../lib/services/batch.service";
 
 // Disable prerendering for API routes
@@ -33,7 +34,7 @@ const paramsSchema = z.object({
  * - 404: Not Found - Batch not found or doesn't belong to user
  * - 500: Internal Server Error - Database or server errors
  */
-export const DELETE: APIRoute = async ({ params, locals }) => {
+export const DELETE: APIRoute = async ({ params, cookies, locals, request }) => {
   try {
     // Validate path parameters
     const paramsValidation = paramsSchema.safeParse(params);
@@ -53,8 +54,9 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
 
     const { id } = paramsValidation.data;
 
-    // Call service to delete the batch
-    const batchService = new BatchService();
+    // Create supabase instance and service
+    const supabase = createSupabaseServerInstance({ headers: request.headers, cookies });
+    const batchService = new BatchService(supabase);
     const deleted = await batchService.deleteBatch(id, locals.user?.id ?? "");
 
     if (!deleted) {

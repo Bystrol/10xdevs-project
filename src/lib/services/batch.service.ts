@@ -1,5 +1,6 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import Papa from "papaparse";
-import { supabaseClient } from "../../db/supabase.client";
+import type { Database } from "../../db/database.types";
 import type { BatchDto, ImportCsvBatchResponseDto, ListBatchesResponseDto, PaginationDto } from "../../types";
 
 /**
@@ -7,6 +8,11 @@ import type { BatchDto, ImportCsvBatchResponseDto, ListBatchesResponseDto, Pagin
  * Handles business logic related to batch data retrieval and manipulation.
  */
 export class BatchService {
+  private supabase: SupabaseClient<Database>;
+
+  constructor(supabase: SupabaseClient<Database>) {
+    this.supabase = supabase;
+  }
   /**
    * Retrieves a paginated list of batches for a specific user.
    *
@@ -21,7 +27,7 @@ export class BatchService {
     const offset = (page - 1) * limit;
 
     // Query total count of active batches for the user from the view
-    const { count: totalCount, error: countError } = await supabaseClient
+    const { count: totalCount, error: countError } = await this.supabase
       .from("active_batches_summary")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
@@ -31,7 +37,7 @@ export class BatchService {
     }
 
     // Query paginated data from the view
-    const { data: batchData, error: batchError } = await supabaseClient
+    const { data: batchData, error: batchError } = await this.supabase
       .from("active_batches_summary")
       .select("*")
       .eq("user_id", userId)
@@ -74,7 +80,7 @@ export class BatchService {
    */
   async deleteBatch(batchId: number, userId: string): Promise<boolean> {
     // First check if the batch exists and belongs to the user
-    const { error: checkError } = await supabaseClient
+    const { error: checkError } = await this.supabase
       .from("batches")
       .select("id")
       .eq("id", batchId)
@@ -91,7 +97,7 @@ export class BatchService {
     }
 
     // If we found the batch, perform the soft-delete
-    const { error: updateError } = await supabaseClient
+    const { error: updateError } = await this.supabase
       .from("batches")
       .update({ status: "deleted" })
       .eq("id", batchId)
@@ -148,7 +154,7 @@ export class BatchService {
     }
 
     // Get existing waste types and locations for validation
-    const wasteTypesResult = await supabaseClient.from("waste_types").select("id, name");
+    const wasteTypesResult = await this.supabase.from("waste_types").select("id, name");
 
     if (wasteTypesResult.error) {
       throw new Error(`Failed to fetch waste types: ${wasteTypesResult.error.message}`);
@@ -218,7 +224,7 @@ export class BatchService {
     }
 
     // Call RPC function to perform transactional insertion
-    const { data: rpcResult, error: rpcError } = await supabaseClient.rpc("import_batch_data", {
+    const { data: rpcResult, error: rpcError } = await this.supabase.rpc("import_batch_data", {
       p_user_id: userId,
       p_filename: file.name,
       p_waste_data: validatedRows,

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
+import { createSupabaseServerInstance } from "../../db/supabase.client";
 import { WasteDataService } from "../../lib/services/waste-data.service";
 import type { GetWasteDataSummaryQueryDto } from "../../types";
 
@@ -58,7 +59,7 @@ const querySchema = z.object({
  * - 401: Unauthorized - User not authenticated
  * - 500: Internal Server Error - Database or server errors
  */
-export const GET: APIRoute = async ({ request, locals }) => {
+export const GET: APIRoute = async ({ request, cookies, locals }) => {
   try {
     // Validate query parameters
     const url = new URL(request.url);
@@ -103,8 +104,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
       }
     }
 
-    // Call service to get waste data summary
-    const wasteDataService = new WasteDataService();
+    // Create supabase instance and service
+    const supabase = createSupabaseServerInstance({ headers: request.headers, cookies });
+    const wasteDataService = new WasteDataService(supabase);
     const result = await wasteDataService.getSummary(validatedParams, locals.user?.id ?? "");
 
     // Return successful response

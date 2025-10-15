@@ -1,4 +1,5 @@
-import { supabaseClient } from "../../db/supabase.client";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
 import type { LocationDto, WasteTypeDto } from "../../types";
 
 /**
@@ -6,6 +7,11 @@ import type { LocationDto, WasteTypeDto } from "../../types";
  * Handles business logic related to retrieving dictionary data like waste types and locations.
  */
 export class DictionaryService {
+  private supabase: SupabaseClient<Database>;
+
+  constructor(supabase: SupabaseClient<Database>) {
+    this.supabase = supabase;
+  }
   /**
    * Retrieves all available waste types from the database.
    * This function queries the waste_types table and returns all records.
@@ -16,7 +22,7 @@ export class DictionaryService {
   async getWasteTypes(): Promise<WasteTypeDto[]> {
     try {
       // Query all waste types from the database
-      const { data: wasteTypesData, error } = await supabaseClient.from("waste_types").select("id, name").order("id");
+      const { data: wasteTypesData, error } = await this.supabase.from("waste_types").select("id, name").order("id");
 
       if (error) {
         throw new Error(`Failed to fetch waste types: ${error.message}`);
@@ -43,7 +49,7 @@ export class DictionaryService {
   async getLocations(): Promise<LocationDto[]> {
     try {
       // Query all locations from the database
-      const { data: locationsData, error } = await supabaseClient.from("locations").select("id, name").order("id");
+      const { data: locationsData, error } = await this.supabase.from("locations").select("id, name").order("id");
 
       if (error) {
         throw new Error(`Failed to fetch locations: ${error.message}`);

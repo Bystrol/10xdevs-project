@@ -1,5 +1,6 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
-import { supabaseClient } from "../../db/supabase.client";
+import type { Database } from "../../db/database.types";
 import type {
   GenerateAiReportCommand,
   GenerateAiReportResponseDto,
@@ -14,6 +15,11 @@ import type {
  * Handles business logic related to waste data aggregation and dashboard queries.
  */
 export class WasteDataService {
+  private supabase: SupabaseClient<Database>;
+
+  constructor(supabase: SupabaseClient<Database>) {
+    this.supabase = supabase;
+  }
   /**
    * Retrieves aggregated waste data summary for dashboard visualizations.
    *
@@ -61,7 +67,7 @@ export class WasteDataService {
       }
 
       // Call the RPC function
-      const { data: rpcResult, error: rpcError } = await supabaseClient.rpc("get_waste_summary", {
+      const { data: rpcResult, error: rpcError } = await this.supabase.rpc("get_waste_summary", {
         p_user_id: userId,
         p_group_by: params.groupBy,
         p_start_date: startDate ? startDate.toISOString().split("T")[0] : undefined,

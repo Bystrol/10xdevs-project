@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
+import { createSupabaseServerInstance } from "../../db/supabase.client";
 import { BatchService } from "../../lib/services/batch.service";
 
 // Disable prerendering for API routes
@@ -48,7 +49,7 @@ const querySchema = z.object({
  * - 400: Bad Request - Invalid query parameters
  * - 500: Internal Server Error - Database or server errors
  */
-export const GET: APIRoute = async ({ request, locals }) => {
+export const GET: APIRoute = async ({ request, cookies, locals }) => {
   try {
     // Validate query parameters
     const url = new URL(request.url);
@@ -72,8 +73,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
     const { page, limit } = queryValidation.data;
 
-    // Call service to get batches for authenticated user
-    const batchService = new BatchService();
+    // Create supabase instance and service
+    const supabase = createSupabaseServerInstance({ headers: request.headers, cookies });
+    const batchService = new BatchService(supabase);
     const result = await batchService.listBatches(locals.user?.id ?? "", page, limit);
 
     // Return successful response

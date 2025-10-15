@@ -1,6 +1,7 @@
 ---
-import Sidebar from "@/components/features/auth/Sidebar";
+import UserMenu from "@/components/features/auth/UserMenu";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 import "../styles/global.css";
 
 interface Props {
@@ -9,6 +10,23 @@ interface Props {
 
 const { title = "WasteTrack Dashboard" } = Astro.props;
 const { user } = Astro.locals;
+
+const LINKS = [
+  {
+    label: "Home",
+    href: "/",
+    dataTestId: "home-link",
+  },
+  {
+    label: "Imports",
+    href: "/imports",
+    dataTestId: "imports-link",
+  },
+];
+
+const isLinkActive = (href: string) => {
+  return Astro.url.pathname === href;
+};
 ---
 
 <!doctype html>
@@ -22,7 +40,29 @@ const { user } = Astro.locals;
   </head>
 
   <body class="dark flex">
-    {user && <Sidebar email={user.email ?? ""} client:only="react" />}
+    <div
+      class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-6 flex flex-col justify-between"
+    >
+      <div class="flex flex-col gap-12">
+        <h1 class="text-3xl font-semibold text-gray-900 dark:text-white">WasteTrack Dashboard</h1>
+
+        <div class="flex flex-col gap-4">
+          {
+            LINKS.map((link) => (
+              <a
+                href={link.href}
+                data-testid={link.dataTestId}
+                class={cn(isLinkActive(link.href) && "text-primary bg-primary/25 rounded-md", "p-2")}
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <UserMenu email={user?.email ?? ""} client:load />
+    </div>
 
     <main class="w-full">
       <slot />

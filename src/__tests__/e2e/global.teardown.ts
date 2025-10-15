@@ -10,6 +10,20 @@ teardown("cleanup database", async () => {
 
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
+  if (!process.env.E2E_USERNAME || !process.env.E2E_PASSWORD) {
+    throw new Error("E2E_USERNAME and E2E_PASSWORD must be set");
+  }
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: process.env.E2E_USERNAME,
+    password: process.env.E2E_PASSWORD,
+  });
+
+  if (signInError) {
+    console.error("Error signing in:", signInError);
+    throw signInError;
+  }
+
   const { error } = await supabase.from("batches").delete().neq("id", 0);
 
   if (error) {

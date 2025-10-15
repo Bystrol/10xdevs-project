@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "../../db/supabase.client";
 import { DictionaryService } from "../../lib/services/dictionary.service";
 
 // Disable prerendering for API routes
@@ -13,10 +14,14 @@ export const prerender = false;
  * - 200: GetWasteTypesResponseDto - Array of waste type objects
  * - 500: Internal Server Error - Database or server errors
  */
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request, cookies }) => {
   try {
-    // Call service to get waste types
-    const dictionaryService = new DictionaryService();
+    // Create supabase instance and service (public endpoint)
+    const supabase = createSupabaseServerInstance({
+      headers: request.headers,
+      cookies,
+    });
+    const dictionaryService = new DictionaryService(supabase);
     const wasteTypes = await dictionaryService.getWasteTypes();
 
     // Return successful response
