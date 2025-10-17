@@ -7,6 +7,7 @@ An analytical dashboard for waste management data, enabling quick CSV data impor
 - [Project Description](#project-description)
 - [Tech Stack](#tech-stack)
 - [Getting Started Locally](#getting-started-locally)
+- [Deployment](#deployment)
 - [Available Scripts](#available-scripts)
 - [Project Scope](#project-scope)
 - [Project Status](#project-status)
@@ -85,6 +86,10 @@ To get a local copy up and running, follow these simple steps.
    ```sh
    npm run dev
    ```
+
+## Deployment
+
+This project is configured for continuous deployment on [Cloudflare Pages](https://pages.cloudflare.com/). The deployment is triggered by github actions.
 
 ## Available Scripts
 

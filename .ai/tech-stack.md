@@ -15,7 +15,7 @@ AI
 
 CI/CD i hosting  
 • GitHub Actions – automatyczne buildy i testy przy każdym commicie.  
-• Cloudflare – edge-deploy, WAF i certyfikaty SSL bez konfiguracji.
+• Cloudflare Pages – edge-deploy, WAF i certyfikaty SSL bez konfiguracji. Hosting zintegrowany z CI/CD dla automatycznych wdrożeń.
 
 Testowanie
 • Vitest – testy jednostkowe i integracyjne, weryfikacja logiki biznesowej.
