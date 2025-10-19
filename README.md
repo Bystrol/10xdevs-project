@@ -80,7 +80,7 @@ To get a local copy up and running, follow these simple steps.
    ```
 5. **Set up environment variables:**
    - Create a `.env` file in the root of the project.
-   - Add the necessary environment variables (e.g., `SUPABASE_URL`, `SUPABASE_KEY`, `OPENROUTER_API_KEY`).
+   - Add the necessary environment variables (e.g., `SUPABASE_URL`, `SUPABASE_KEY`, `OPENAI_API_KEY`).
 
 6. **Run the development server:**
    ```sh

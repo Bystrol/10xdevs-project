@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { OPENAI_API_KEY } from "astro:env/server";
 import OpenAI from "openai";
 import type { Database } from "../../db/database.types";
 import type {
@@ -143,7 +144,7 @@ Keep the report focused and actionable, suitable for management review.`;
 
       // Initialize OpenAI client
       const openai = new OpenAI({
-        apiKey: import.meta.env.OPENAI_API_KEY,
+        apiKey: OPENAI_API_KEY,
       });
 
       // Generate AI report
