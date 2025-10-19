@@ -301,10 +301,56 @@ export function useDashboard() {
     }
   }, [state.filters]);
 
-  // Export to PDF (placeholder - will be implemented later)
-  const handleExportPdf = useCallback((chartId: string) => {
-    // TODO: Implement PDF export using html2canvas and jspdf
-    console.log(`Exporting chart ${chartId} to PDF`);
+  // Export to PDF
+  const handleExportPdf = useCallback(async (chartId: string) => {
+    try {
+      // Dynamic imports to avoid bundling these libraries when not needed
+      const html2canvas = (await import("html2canvas")).default;
+      const jsPDF = (await import("jspdf")).jsPDF;
+
+      // Find the chart element by ID
+      const chartElement = document.querySelector(`[data-chart-id="${chartId}"]`) as HTMLElement;
+      if (!chartElement) {
+        console.error(`Chart element with ID ${chartId} not found`);
+        return;
+      }
+
+      // Create canvas from the chart element
+      const canvas = await html2canvas(chartElement, {
+        backgroundColor: "#ffffff",
+        scale: 2, // Higher quality
+        useCORS: true,
+      });
+
+      // Create PDF
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      // Calculate dimensions to fit the chart in PDF
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = (pdfHeight - imgHeight * ratio) / 2;
+
+      pdf.addImage(imgData, "PNG", imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+
+      // Generate filename with current date
+      const now = new Date();
+      const dateStr = now.toISOString().split("T")[0];
+      const filename = `waste-chart-${chartId}-${dateStr}.pdf`;
+
+      // Download the PDF
+      pdf.save(filename);
+    } catch (error) {
+      console.error("Error exporting chart to PDF:", error);
+    }
   }, []);
 
   // Initial data fetch

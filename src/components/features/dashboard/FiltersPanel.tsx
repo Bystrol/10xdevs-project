@@ -75,7 +75,7 @@ export function FiltersPanel({ wasteTypes, locations, onFilterChange, onFilterRe
   const canApply = isValidDateRange;
 
   return (
-    <div className="space-y-4 p-4 border rounded-lg bg-card">
+    <div className="space-y-4 p-4 border rounded-lg bg-card overflow-hidden">
       <h3 className="text-lg font-semibold">Filters</h3>
 
       <div className="grid gap-4">

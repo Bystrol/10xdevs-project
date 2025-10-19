@@ -58,7 +58,7 @@ export function MultiSelectCombobox<T extends { id: number; name: string }>({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between", className)}
+          className={cn("w-full h-fit justify-between", className)}
           disabled={disabled}
         >
           <div className="flex flex-wrap gap-1">
@@ -86,7 +86,7 @@ export function MultiSelectCombobox<T extends { id: number; name: string }>({
           <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0" align="start">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-h-[300px] p-0" align="start" side="bottom">
         <Command>
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>

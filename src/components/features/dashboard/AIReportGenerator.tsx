@@ -17,9 +17,10 @@ interface AIReportGeneratorProps {
   report: string;
   isLoading: boolean;
   error: string | null;
+  disabled: boolean;
 }
 
-export function AIReportGenerator({ onGenerateReport, report, isLoading, error }: AIReportGeneratorProps) {
+export function AIReportGenerator({ onGenerateReport, report, isLoading, error, disabled }: AIReportGeneratorProps) {
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const handleGenerate = async () => {
@@ -48,7 +49,7 @@ export function AIReportGenerator({ onGenerateReport, report, isLoading, error }
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleGenerate} disabled={isLoading} className="shrink-0">
+            <Button onClick={handleGenerate} disabled={isLoading || disabled} className="shrink-0">
               {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent mr-2" />

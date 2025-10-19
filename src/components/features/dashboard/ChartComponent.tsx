@@ -76,10 +76,10 @@ export function ChartComponent({ chartData, onExport }: ChartComponentProps) {
             <Line
               type="monotone"
               dataKey="value"
-              stroke="hsl(var(--primary))"
+              stroke="var(--primary)"
               strokeWidth={2}
-              dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6 }}
+              dot={{ fill: "var(--primary)", strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, fill: "#16a34a" }}
             />
           </LineChart>
         );
@@ -107,7 +107,7 @@ export function ChartComponent({ chartData, onExport }: ChartComponentProps) {
                 borderRadius: "6px",
               }}
             />
-            <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="value" fill="var(--primary)" radius={[4, 4, 0, 0]} />
           </BarChart>
         );
 
@@ -126,7 +126,7 @@ export function ChartComponent({ chartData, onExport }: ChartComponentProps) {
         </Button>
       </div>
 
-      <div className="h-64 w-full">
+      <div className="h-64 w-full" data-chart-id={chartData.id}>
         <ResponsiveContainer width="100%" height="100%">
           {renderChart()}
         </ResponsiveContainer>
