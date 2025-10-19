@@ -122,3 +122,29 @@ export type LocationDto = Pick<Tables<"locations">, "id" | "name">;
  */
 export type GetLocationsResponseDto = LocationDto[];
 // #endregion
+
+// #region Dashboard ViewModels
+/**
+ * ViewModel for filters in the dashboard.
+ */
+export interface FilterViewModel {
+  dateRange: {
+    from: Date | undefined;
+    to: Date | undefined;
+  };
+  wasteTypeIds: number[];
+  locationIds: number[];
+}
+
+/**
+ * ViewModel for chart data in the dashboard.
+ */
+export interface ChartDataViewModel {
+  id: string; // e.g., 'by-month', 'by-type'
+  title: string;
+  groupBy: "month" | "type" | "location";
+  data: WasteDataSummaryItemDto[];
+  isLoading: boolean;
+  error: string | null;
+}
+// #endregion

@@ -1,8 +1,8 @@
 ---
-import Welcome from "../components/Welcome.astro";
+import { DashboardView } from "../components/features/dashboard/DashboardView.tsx";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-  <Welcome />
+  <DashboardView client:load />
 </Layout>
