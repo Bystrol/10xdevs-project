@@ -96,12 +96,20 @@ This project is configured for continuous deployment on [Cloudflare Pages](https
 In the project directory, you can run:
 
 - `npm run dev`: Runs the app in development mode.
+- `npm run dev:e2e`: Runs the app with test environment variables for E2E tests purposes.
 - `npm run build`: Builds the app for production.
 - `npm run preview`: Starts a local preview server for the production build.
 - `npm run astro`: Access the Astro CLI.
 - `npm run lint`: Lints the code using ESLint.
 - `npm run lint:fix`: Lints and automatically fixes problems.
 - `npm run format`: Formats code with Prettier.
+- `npm run test`: Runs vitest unit tests.
+- `npm run test:watch`: Runs vitest unit tests in watch mode.
+- `npm run test:ui`: Runs vitest unit tests in UI mode.
+- `npm run test:e2e`: Runs playwright E2E tests.
+- `npm run test:e2e:ui`: Runs playwright E2E tests in UI mode.
+- `npm run test:e2e:debug`: Runs playwright E2E tests in debug mode.
+- `npm run test:e2e:codegen`: Runs playwright E2E tests in codegen mode.
 
 ## Project Scope
 
